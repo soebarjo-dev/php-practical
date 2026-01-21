@@ -8,6 +8,8 @@ $mahasiswa = [
     ["nama" => "Elok", "nilai" => 89, "kelas" => "B"], 
 ];
 
+$mahasiswa[0] = 
+
 function tentukanNilaiMahasiswa($dataMahasiswa, $batasNilai=80){
     $output = "";
     foreach ($dataMahasiswa as $key => $mahasiswa){ 
