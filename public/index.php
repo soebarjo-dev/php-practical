@@ -9,5 +9,8 @@ $service = new MahasiswaService($storage);
 $data = $service->getAll();
 $content = "";
 
-// require "../views/layout.php";
+ob_start();
 require "../views/list.php";
+$content = ob_get_clean();
+
+require "../views/layout.php";
