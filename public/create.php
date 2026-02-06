@@ -1,33 +1,32 @@
-<?php 
+<h2>Tambah Mahasiswa</h2>
 
-require_once "../app/Domain/Mahasiswa.php";
-require_once "../app/Storage/JSONStorage.php";
-require_once "../app/Services/MahasiswaService.php";
-require_once "../app/Helpers/General.php";
+<form action="save.php" method="post" autocomplete="off">
+    <label>Judul Buku</label> <br/>
+    <input type="text" name="judulBuku" required autofocus />
+    <br/><br/>
+    <label>Penulis</label> <br/>
+    <input type="text" name="penulis" required autofocus />
+    <br/><br/>
+    <label>Tahun Terbit</label> <br/>
+    <input type="number" name="tahunTerbit" required autofocus />
+    <br/><br/>
+    <label>Jenis Buku</label> <br/>
+    <input id="jenisBukuBiasa" type="radio" name="jenisBuku" value="biasa" checked />
+    <label for="jenisBukuBiasa">Biasa</label>
 
-$storage = new JSONStorage('../storage/mahasiswa.json');
-$service = new MahasiswaService($storage);
-$helper = new General();
+    <input id="jenisBukuReferensi" type="radio" name="jenisBuku" value="referensi" />
+    <label for="jenisBukuReferensi">Referensi</label>
+    <br/><br/>
+    <label>Status Buku</label> <br/>
+    <input id="statusBukuBiasa" type="radio" name="statusBuku" value="tersedia" checked />
+    <label for="statusBukuBiasa">Tersedia</label>
 
-if ($_SERVER['REQUEST_METHOD'] === "POST"){
-    $mahasiswa = new Mahasiswa($_POST['nilai'], $_POST['kelas'], $_POST['nama'], 'surabaya', $_POST['umur'], $_POST['jenisKelamin']);
-    $binding = [
-        'nama' => $mahasiswa->getNama(),
-        'kelas' => $mahasiswa->getKelas(),
-        'nilai' => $mahasiswa->getNilai(),
-        'alamat' => $mahasiswa->getAlamat(),
-        'umur' => $mahasiswa->getUmur(),
-        'jenisKelamin' => $mahasiswa->getJenisKelamin(),
-    ];
+    <input id="statusBukuReferensi" type="radio" name="statusBuku" value="dipinjam" />
+    <label for="statusBukuReferensi">Dipinjam</label>
+    <br/><br/>
 
-    $service->add($binding);
-
-    $helper->redirectTo('index.php');
-}
-
-ob_start();
-
-require "../views/form.php";
-$content = ob_get_clean();
-
-require "../views/layout.php";
+<br/>
+<br/>
+<br/>
+<button type="submit">Simpan</button>
+</form
