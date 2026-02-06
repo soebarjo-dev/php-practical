@@ -20,13 +20,11 @@
     <label>Status Buku</label> <br/>
     <input id="statusBukuBiasa" type="radio" name="statusBuku" value="tersedia" checked />
     <label for="statusBukuBiasa">Tersedia</label>
-
-    <input id="statusBukuReferensi" type="radio" name="statusBuku" value="dipinjam" />
-    <label for="statusBukuReferensi">Dipinjam</label>
     <br/><br/>
 
 <br/>
 <br/>
 <br/>
 <button type="submit">Simpan</button>
+<button type="button" onclick="window.history.back()">Batal</button>
 </form

@@ -10,9 +10,17 @@ class Buku
         $this->connection = $db;
     }
 
-    public function all()
+    public function all($search='')
     {
-        $statement = $this->connection->prepare("SELECT * FROM {$this->table} WHERE tanggal_hapus IS NULL");
+        $query = "SELECT * FROM {$this->table} WHERE ";
+
+        if ($search !== "" && strlen($search) > 0){
+            $query .= "(judul LIKE '%{$search}%' OR penulis LIKE '%{$search}%' OR tahun_terbit LIKE '%{$search}%') AND ";
+        }
+
+        $query .= "tanggal_hapus IS NULL";
+
+        $statement = $this->connection->prepare($query);
         $statement->execute();
 
         return $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -41,7 +49,7 @@ class Buku
         $statement = $this->connection->prepare("
             UPDATE {$this->table}
             SET judul = ?, penulis = ?, tahun_terbit = ?, jenis_buku = ?, status_buku = ?
-            WHERE id = ${id}
+            WHERE id = {$id}
         ");
 
         return $statement->execute($params);
@@ -51,7 +59,7 @@ class Buku
     {
         $statement = $this->connection->prepare("
             DELETE FROM {$this->table}
-            WHERE id = ${id}
+            WHERE id = {$id}
         ");
 
         return $statement->execute($params);
@@ -62,7 +70,7 @@ class Buku
         $statement = $this->connection->prepare("
             UPDATE {$this->table}
             SET tanggal_hapus = now()
-            WHERE id = ${id}
+            WHERE id = {$id}
         ");
 
         return $statement->execute($params);
