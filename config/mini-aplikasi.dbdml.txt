@@ -1,0 +1,86 @@
+Table users {
+  id int [pk, increment]
+  name varchar(100) [not null]
+  email varchar(100) [not null]
+  password varchar(100) [not null]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp
+  deleted_at timestamp
+  created_by int [not null]
+  updated_by int [not null]
+  deleted_by int [not null]
+}
+
+Table units {
+  id int [pk, increment]
+  name varchar(50) [not null]
+  symbol varchar(20) [not null]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  created_by int [not null]
+}
+
+Table customers {
+  id int [pk, increment]
+  name varchar(100) [not null]
+  email varchar(100) [not null]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp
+  deleted_at timestamp
+  created_by int [not null]
+  updated_by int [not null]
+  deleted_by int [not null]
+}
+
+Table products {
+  id int [pk, increment]
+  unit_id int [not null]
+  name varchar(100) [not null]
+  price numeric(12, 2) [not null]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp
+  deleted_at timestamp
+  created_by int [not null]
+  updated_by int [not null]
+  deleted_by int [not null]
+}
+
+Table transactions {
+  id int [pk, increment]
+  user_id int [not null]
+  customer_id int [not null]
+  invoice_number varchar(50) [not null]
+  transaction_date date [not null]
+  subtotal numeric(12,2) [default: 0]
+  tax_percent numeric(12,2) [default: 0]
+  tax_amount numeric(12,2) [default: 0]
+  grand_total numeric(12,2) [default: 0]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+Table transaction_items {
+  id int [pk, increment]
+  transaction_id int [not null]
+  product_id int [not null]
+  quantity int [not null]
+  price numeric (12,2) [not null]
+  total numeric (12,2) [not null]
+}
+
+
+Ref: transactions.customer_id > customers.id
+Ref: transactions.user_id > users.id
+Ref: transaction_items.transaction_id > transactions.id
+Ref: transaction_items.product_id > products.id
+Ref: products.unit_id > units.id
+Ref: units.created_by > users.id
+Ref: customers.created_by > users.id
+Ref: customers.updated_by > users.id
+Ref: customers.deleted_by > users.id
+
+Ref: products.created_by > users.id
+Ref: products.updated_by > users.id
+Ref: products.deleted_by > users.id
+
+Ref: users.created_by > users.id
+Ref: users.updated_by > users.id
+Ref: users.deleted_by > users.id
