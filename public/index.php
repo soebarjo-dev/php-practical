@@ -1,9 +1,12 @@
 <?php 
-    require_once "../config/General.php";
+
+    require_once "classes.php";
     require "../templates/header.php";
     require "../templates/sidebar.php";
     require "../templates/navbar.php";
-    
+
+    $dataUnit = App::unit()->getAll();
+    var_dump($dataUnit);
     if ($page !== 'unknown'){
         $menuByURLPage = array_column($menu, "urlPage");
         $indexMenuURLPage = array_search($page, $menuByURLPage);
