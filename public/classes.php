@@ -1,22 +1,25 @@
 <?php 
+    if (session_status() === PHP_SESSION_NONE){
+        session_start();
+    }
 
-    /* DATABASE CONFIG */
-    require_once "../config/Database.php";
-    
-    /* BASE */
-    require_once "../classes/Base.php";
-    
-    /* MODULES */
-    require_once "../classes/Auth.php";
-    require_once "../classes/Customer.php";
-    require_once "../classes/Product.php";
-    require_once "../classes/Report.php";
-    require_once "../classes/Transaction.php";
-    require_once "../classes/Unit.php";
-    require_once "../classes/User.php";
+    spl_autoload_register(function ($className){
+        $directories = [
+            __DIR__ . '/../config/',
+            __DIR__ . '/../classes/',
+            __DIR__ . '/../controllers/',
+        ];
 
-    /* WRAPPER */
-    require_once "../classes/App.php";
-    
-    /* GENERAL CONFIG */
-    require_once "../config/General.php";
+        foreach ($directories as $dir){
+            $file = $dir . $className . '.php';
+            if (file_exists($file)){
+                require_once $file;
+                return;
+            }
+        }
+    });
+
+    require_once __DIR__ . '/../helpers/helpers.php';
+    require_once __DIR__ . '/../config/Env.php';
+    Env::load();
+    require_once __DIR__ . '/../config/General.php';

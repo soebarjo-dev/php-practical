@@ -4,7 +4,7 @@
         <div class="relative">
             <button onclick="toggleDropdown()" class="flex items-center space-x-2 bg-gray-100 px-2 py-1 hover:bg-gray-200 focus:outline-none">
                 <span class="text-gray-700 text-sm font-medium">
-                    Nama Pengguna
+                    <?= current_user('name') ?>
                 </span>
             </button>
 
