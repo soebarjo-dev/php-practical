@@ -8,6 +8,13 @@
     <body class="bg-gray-100 flex items-center justify-center min-h-screen">
         <div class="bg-white shadow-lg p-4 w-96">
             <h2 class="text-2xl font-bold mb-4 text-center text-gray-600">Autentikasi Masuk</h2>
+
+            <?php if (!empty($error)){ ?>
+                <div class="mb-4 p-3 bg-red-100 border border-red-300 text-red-700 text-sm">
+                    <?= $error; ?>
+                </div>
+            <?php } ?>
+
             <form method="POST">
                 <div class="mb-2">
                     <label class="block text-gray-600 mb-1">E-Mail</label>

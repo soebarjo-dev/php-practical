@@ -10,7 +10,7 @@
 
             <div id="profileDropdown" class="hidden absolute right-0 mt-0.5 w-20 bg-gray-100 border border-gray-400">
                 <a href="#" class="block p-1 hover:bg-gray-100 text-gray-700 text-sm">Profile</a>
-                <a href="#" class="block p-1 hover:bg-gray-100 text-gray-700 text-sm">Keluar</a>
+                <a href="?page=sign-out" class="block p-1 hover:bg-gray-100 text-gray-700 text-sm">Keluar</a>
             </div>
         </div>
     </header>

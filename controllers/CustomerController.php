@@ -1,19 +1,18 @@
 <?php
 
-class UserController
+class CustomerController
 {
     public function index(){
-        return App::user()->getAll();
+        return App::customer()->getAll();
     }
 
     public function store() {
         $name = trim($_POST['name'] ?? '');
         $email = trim($_POST['email'] ?? '');
-        $password = trim($_POST['password'] ?? '');
         $messages = "";
 
-        if (empty($name) || empty($email) || empty($password)){
-            $messages = "Name, email, dan password wajib diisi.";
+        if (empty($name) || empty($email)){
+            $messages = "Name, email wajib diisi.";
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
@@ -21,8 +20,8 @@ class UserController
         }
 
         $createdBy = current_user('id') ?? 0;
-        $success = App::user()->create($name, $email, $password, $createdBy);
-        $messages = $success ? "Pengguna berhasil ditambahkan":"Gagal menambahkan pengguna";
+        $success = App::customer()->create($name, $email, $createdBy);
+        $messages = $success ? "Pelanggan berhasil ditambahkan":"Gagal menambahkan pelanggan";
 
         $_SESSION[$success ? 'flash_success':'flash_error'] = $messages;
 
@@ -39,7 +38,7 @@ class UserController
         }
 
         if (empty($name) || empty($email)){
-            $messages = "Name, email, dan password wajib diisi.";
+            $messages = "Name, email wajib diisi.";
         }
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
@@ -47,8 +46,8 @@ class UserController
         }
 
         $updatedBy = current_user('id') ?? 0;
-        $success = App::user()->update($id, $name, $email, $updatedBy);
-        $messages = $success ? "Pengguna berhasil diperbarui":"Gagal memperbarui pengguna";
+        $success = App::customer()->update($id, $name, $email, $updatedBy);
+        $messages = $success ? "Pelanggan berhasil diperbarui":"Gagal memperbarui pelanggan";
 
         $_SESSION[$success ? 'flash_success':'flash_error'] = $messages;
 
@@ -59,13 +58,8 @@ class UserController
         $id = (int) $_POST['id'] ?? 0;
         $currentId = (int) current_user('id');
 
-        if ($id <= 0 || $id === $currentId){
-            $_SESSION['flash_error'] = 'Tidak bisa menghapus akun sendiri';
-            redirect('/public/?page=master-user');
-        }
-
-        $success = App::user()->delete($id, $currentId);
-        $messages = $success ? "Pengguna berhasil dihapus":"Gagal menghapus pengguna";
+        $success = App::customer()->delete($id, $currentId);
+        $messages = $success ? "Pelanggan berhasil dihapus":"Gagal menghapus pelanggan";
 
         $_SESSION[$success ? 'flash_success':'flash_error'] = $messages;
 
@@ -73,6 +67,6 @@ class UserController
     }
 
     private function baseRedirectTo(){
-        redirect('?page=master-user');
+        redirect('?page=master-customer');
     }
 }

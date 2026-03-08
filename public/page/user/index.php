@@ -1,9 +1,3 @@
-<?php
-    $flashSuccess = $_SESSION['flash_success'] ?? null;
-    $flashError = $_SESSION['flash_error'] ?? null;
-    unset($_SESSION['flash_success'], $_SESSION['flash_error']);
-?>
-
 <div class="bg-white shadow p-4">
     <div class="flex justify-between">
         <h2 class="text-2xl font-bold mb-2">Master Pengguna</h2>
@@ -46,7 +40,13 @@
                     <td class="py-2 border-x p-2"><?= $user['email'] ?></td>
                     <td class="py-2 border-x p-2 text-center">
                         <button onclick='modalAction("modalEditUser","open",<?= json_encode($user); ?>)' class="text-xs bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1">Edit</button>
-                        <button class="text-xs bg-red-400 hover:bg-red-500 text-white px-2 py-1">Hapus</button>
+                        <form method="POST" class="inline" onsubmit="return confirm('Apakah anda yakin menghapus data ini ?')">
+                            <input type="hidden" name="_action" value="user.delete" />
+                            <input type="hidden" name="id" value="<?= (int) $user['id'] ?>" />
+                            <button class="text-xs bg-red-400 hover:bg-red-500 text-white px-2 py-1">
+                                Hapus
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 <?php } ?>
@@ -55,7 +55,7 @@
     </table>
 </div>
 
-<div id="modalAddUser" class="hidden fixed inset-0 bg-black opacity-80 flex items-center justify-center z-50">
+<div id="modalAddUser" class="hidden fixed inset-0 bg-black flex items-center justify-center z-50">
     <div class="bg-white shadow-xl p-4 w-96">
         <h3 class="text-lg font-bold mb-4">Tambah Pengguna</h3>
         <form method="POST" action="?page=master-user" autocomplete="off">

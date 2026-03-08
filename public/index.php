@@ -4,12 +4,15 @@
     auth_guard();
 
     $requestedPage = $_GET['page'] ?? 'dashboard';
-    $allowedURLPages = array_column($menu, 'urlPage');
+    if ($requestedPage === 'sign-out'){
+        (new AuthController())->signOut();
+    }
 
+    $allowedURLPages = array_column($menu, 'urlPage');
     if (!in_array($requestedPage, $allowedURLPages, true)){
         $requestedPage = 'dashboard';
     }
-
+    
     $menuIndex = array_search($requestedPage, $allowedURLPages);
     $activeMenu = $menu[$menuIndex];
     $folder = $activeMenu['path'];
@@ -22,6 +25,15 @@
             'user.store' => fn() => (new UserController())->store(),
             'user.update' => fn() => (new UserController())->update(),
             'user.delete' => fn() => (new UserController())->destroy(),
+            'unit.store' => fn() => (new UnitController())->store(),
+            'unit.update' => fn() => (new UnitController())->update(),
+            'unit.delete' => fn() => (new UnitController())->destroy(),
+            'customer.store' => fn() => (new CustomerController())->store(),
+            'customer.update' => fn() => (new CustomerController())->update(),
+            'customer.delete' => fn() => (new CustomerController())->destroy(),
+            'product.store' => fn() => (new ProductController())->store(),
+            'product.update' => fn() => (new ProductController())->update(),
+            'product.delete' => fn() => (new ProductController())->destroy(),
         ];
 
         if (isset($postRoutes[$actionName])){
@@ -35,19 +47,26 @@
 
     switch ($folder){
         case 'unit':
-            $viewData['units'] = '';
+            $viewData['units'] = (new UnitController())->index();
             break;
         case 'user':
             $viewData['users'] = (new UserController())->index();
             break;
         case 'product':
-            $viewData['products'] = '';
+            $viewData['products'] = (new ProductController())->index();
+            $viewData['list_units'] = (new ProductController())->lists('units');
             break;
         case 'customer':
-            $viewData['customers'] = '';
+            $viewData['customers'] = (new CustomerController())->index();
             break;
         case 'transaksi':
-            $viewData['transactions'] = '';
+            if (isset($_GET['detail'])){
+                
+            } else {
+                $viewData['transactions'] = '';
+                $viewData['customers'] = (new TransactionController())->lists('customers');
+                $viewData['products'] = (new TransactionController())->lists('products');
+            }
             break;
         case 'report':
             $viewData['reports'] = '';
@@ -63,6 +82,10 @@
 
     $viewFile = './page/' . $folder . '/index.php';
     if (file_exists($viewFile)){
+        $flashSuccess = $_SESSION['flash_success'] ?? null;
+        $flashError = $_SESSION['flash_error'] ?? null;
+        unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+
         require_once $viewFile;
     } else {
         echo '<div class="p-4 text-red-600">Halaman tidak ditemukan</div>';

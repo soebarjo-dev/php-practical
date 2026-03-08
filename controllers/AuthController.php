@@ -29,4 +29,11 @@ class AuthController
 
         require_once __DIR__ . '/../templates/login_view.php';
     }
+
+    public function signOut()
+    {
+        session_destroy();
+
+        redirect('/public/login.php');
+    }
 }
