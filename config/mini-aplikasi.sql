@@ -6,9 +6,9 @@ CREATE TABLE "users" (
   "created_at" timestamp DEFAULT (CURRENT_TIMESTAMP),
   "updated_at" timestamp,
   "deleted_at" timestamp,
-  "created_by" int NOT NULL,
-  "updated_by" int NOT NULL,
-  "deleted_by" int NOT NULL
+  "created_by" int NOT NULL DEFAULT 0,
+  "updated_by" int NOT NULL DEFAULT 0,
+  "deleted_by" int NOT NULL DEFAULT 0
 );
 
 CREATE TABLE "units" (
@@ -16,7 +16,7 @@ CREATE TABLE "units" (
   "name" varchar(50) NOT NULL,
   "symbol" varchar(20) NOT NULL,
   "created_at" timestamp DEFAULT (CURRENT_TIMESTAMP),
-  "created_by" int NOT NULL
+  "created_by" int NOT NULL DEFAULT 0
 );
 
 CREATE TABLE "customers" (
@@ -26,9 +26,9 @@ CREATE TABLE "customers" (
   "created_at" timestamp DEFAULT (CURRENT_TIMESTAMP),
   "updated_at" timestamp,
   "deleted_at" timestamp,
-  "created_by" int NOT NULL,
-  "updated_by" int NOT NULL,
-  "deleted_by" int NOT NULL
+  "created_by" int NOT NULL DEFAULT 0,
+  "updated_by" int NOT NULL DEFAULT 0,
+  "deleted_by" int NOT NULL DEFAULT 0
 );
 
 CREATE TABLE "products" (
@@ -39,9 +39,9 @@ CREATE TABLE "products" (
   "created_at" timestamp DEFAULT (CURRENT_TIMESTAMP),
   "updated_at" timestamp,
   "deleted_at" timestamp,
-  "created_by" int NOT NULL,
-  "updated_by" int NOT NULL,
-  "deleted_by" int NOT NULL
+  "created_by" int NOT NULL DEFAULT 0,
+  "updated_by" int NOT NULL DEFAULT 0,
+  "deleted_by" int NOT NULL DEFAULT 0
 );
 
 CREATE TABLE "transactions" (
@@ -66,32 +66,12 @@ CREATE TABLE "transaction_items" (
   "total" numeric(12,2) NOT NULL
 );
 
-ALTER TABLE "transactions" ADD FOREIGN KEY ("customer_id") REFERENCES "customers" ("id");
+ALTER TABLE "transactions" ADD FOREIGN KEY ("customer_id") REFERENCES "customers" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-ALTER TABLE "transactions" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+ALTER TABLE "transactions" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-ALTER TABLE "transaction_items" ADD FOREIGN KEY ("transaction_id") REFERENCES "transactions" ("id");
+ALTER TABLE "transaction_items" ADD FOREIGN KEY ("transaction_id") REFERENCES "transactions" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-ALTER TABLE "transaction_items" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id");
+ALTER TABLE "transaction_items" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-ALTER TABLE "products" ADD FOREIGN KEY ("unit_id") REFERENCES "units" ("id");
-
-ALTER TABLE "units" ADD FOREIGN KEY ("created_by") REFERENCES "users" ("id");
-
-ALTER TABLE "customers" ADD FOREIGN KEY ("created_by") REFERENCES "users" ("id");
-
-ALTER TABLE "customers" ADD FOREIGN KEY ("updated_by") REFERENCES "users" ("id");
-
-ALTER TABLE "customers" ADD FOREIGN KEY ("deleted_by") REFERENCES "users" ("id");
-
-ALTER TABLE "products" ADD FOREIGN KEY ("created_by") REFERENCES "users" ("id");
-
-ALTER TABLE "products" ADD FOREIGN KEY ("updated_by") REFERENCES "users" ("id");
-
-ALTER TABLE "products" ADD FOREIGN KEY ("deleted_by") REFERENCES "users" ("id");
-
-ALTER TABLE "users" ADD FOREIGN KEY ("created_by") REFERENCES "users" ("id");
-
-ALTER TABLE "users" ADD FOREIGN KEY ("updated_by") REFERENCES "users" ("id");
-
-ALTER TABLE "users" ADD FOREIGN KEY ("deleted_by") REFERENCES "users" ("id");
+ALTER TABLE "products" ADD FOREIGN KEY ("unit_id") REFERENCES "units" ("id") DEFERRABLE INITIALLY IMMEDIATE;
