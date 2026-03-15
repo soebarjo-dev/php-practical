@@ -34,6 +34,7 @@
             'product.store' => fn() => (new ProductController())->store(),
             'product.update' => fn() => (new ProductController())->update(),
             'product.delete' => fn() => (new ProductController())->destroy(),
+            'transaction.store' => fn() => (new TransactionController())->store(),
         ];
 
         if (isset($postRoutes[$actionName])){
@@ -59,11 +60,15 @@
         case 'customer':
             $viewData['customers'] = (new CustomerController())->index();
             break;
-        case 'transaksi':
-            if (isset($_GET['detail'])){
-                
+        case 'transaction':
+            if (isset($_GET['detailID'])){
+                $detail = (new TransactionController())->detail((int) $_GET['detailID']);
+                if ($detail){
+                    $viewData = $detail;
+                    $folder = "transaction/detail";
+                }
             } else {
-                $viewData['transactions'] = '';
+                $viewData['transactions'] = (new TransactionController())->index();
                 $viewData['customers'] = (new TransactionController())->lists('customers');
                 $viewData['products'] = (new TransactionController())->lists('products');
             }

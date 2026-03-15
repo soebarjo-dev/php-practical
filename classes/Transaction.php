@@ -5,46 +5,49 @@ class Transaction extends Base
     public function getAll(){
         $query = "
             SELECT 
-                transaction.id,
-                transaction.invoice_number,
-                transaction.transaction_date,
-                transaction.subtotal,
-                transaction.tax_percent,
-                transaction.tax_amount,
-                transaction.grand_total,
-                transaction.created_at,
+                trx.id,
+                trx.invoice_number,
+                trx.transaction_date,
+                trx.subtotal,
+                trx.tax_percent,
+                trx.tax_amount,
+                trx.grand_total,
+                trx.created_at,
                 customer.name customerName,
-                user.name userName
-            FROM {$this->tableName()} transaction
-            JOIN {$this->tableName('customers')} customer ON customer.id = transaction.customer_id
-            JOIN {$this->tableName('users')} user ON user.id = transaction.user_id
-            ORDER BY transaction.transaction_date DESC, transaction.id DESC
+                usr.name userName
+            FROM {$this->tableName()} trx
+            JOIN {$this->tableName('customers')} customer ON customer.id = trx.customer_id
+            JOIN {$this->tableName('users')} usr ON usr.id = trx.user_id
+            ORDER BY trx.transaction_date DESC, trx.id DESC
         ";
+        
         return $this->connection->query($query)->fetchAll();
     }
 
     public function findByID($id){
         $query = "
             SELECT 
-                transaction.id,
-                transaction.invoice_number,
-                transaction.transaction_date,
-                transaction.subtotal,
-                transaction.tax_percent,
-                transaction.tax_amount,
-                transaction.grand_total,
-                transaction.created_at,
+                trx.id,
+                trx.invoice_number,
+                trx.transaction_date,
+                trx.subtotal,
+                trx.tax_percent,
+                trx.tax_amount,
+                trx.grand_total,
+                trx.created_at,
                 customer.name customerName,
-                user.name userName
-            FROM {$this->tableName()} transaction
-            JOIN {$this->tableName('customers')} customer ON customer.id = transaction.customer_id
-            JOIN {$this->tableName('users')} user ON user.id = transaction.user_id
-            WHERE transaction.id = :paramID
-            ORDER BY transaction.transaction_date DESC, transaction.id DESC
+                usr.name userName
+            FROM {$this->tableName()} trx
+            JOIN {$this->tableName('customers')} customer ON customer.id = trx.customer_id
+            JOIN {$this->tableName('users')} usr ON usr.id = trx.user_id
+            WHERE trx.id = :paramID
+            ORDER BY trx.transaction_date DESC, trx.id DESC
         ";
 
         $statement = $this->connection->prepare($query);
-        return $statement->execute(['paramID' => $id])->fetch();
+        $statement->execute(['paramID' => $id]);
+
+        return $statement->fetch();
     }
 
     public function getItems($transactionId){
@@ -58,20 +61,24 @@ class Transaction extends Base
                 unit.symbol unitSymbol
             FROM {$this->tableName('transaction_items')} transaction_item
             JOIN {$this->tableName('products')} product ON product.id = transaction_item.product_id
-            JOIN {$this->tableName('units')} unit ON unit.id = transaction_item.unit_id
+            JOIN {$this->tableName('units')} unit ON unit.id = product.unit_id
             WHERE transaction_item.transaction_id = :paramTransactionID
         ";
 
         $statement = $this->connection->prepare($query);
-        return $statement->execute(['paramTransactionID' => $transactionId])->fetchAll();
+        $statement->execute(['paramTransactionID' => $transactionId]);
+
+        return $statement->fetchAll();
     }
 
     public function generateInvoiceNumber(){
         $prefix = "INV-" . date('Ymd') . "-";
-        $query = "SELECT COUNT(*) FROM transactions WHERE invoice_number LIKE :prefix";
-        $statement = $this->connection->prepare($query)->execute(['prefix' => $prefix . "%"]);
+        $query = "SELECT COUNT(*) FROM transactions WHERE invoice_number LIKE :paramPrefix";
+        $statement = $this->connection->prepare($query);
+        $statement->execute(['paramPrefix' => $prefix . "%"]);
 
         $count = (int) $statement->fetchColumn();
+
         return $prefix . str_pad($count + 1, 4, 0, STR_PAD_LEFT);
     }
 
@@ -101,11 +108,11 @@ class Transaction extends Base
                 'paramTaxAmount' => $taxAmount,
                 'paramGrandTotal' => $grandTotal,
             ];
-            $statement = $this->connection->prepare($query)->execute($paramBind);
+            $this->connection->prepare($query)->execute($paramBind);
             $transactionID = (int) $this->connection->lastInsertId();
 
             $queryItem = "
-                INSERT INTO transaction_item
+                INSERT INTO {$this->tableName('transaction_items')}
                     (transaction_id, product_id, quantity, price, total)
                 VALUES
                     (:paramTransactionId, :paramProductId, :paramQuantity, :paramPrice, :paramTotal)
@@ -126,6 +133,7 @@ class Transaction extends Base
             $this->connection->commit();
             return true;
         } catch(\Throwable $e){
+            var_dump($e->getMessage()) or exit();
             $this->connection->rollback();
             error_log($e->getMessage());
             return false;
